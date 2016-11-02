@@ -72,6 +72,12 @@ def parseArgs(args=sys.argv[1:]):
         help="Whether to overwrite the output files if they already exist.",
         action="store_true")
 
+    parser.add_argument(
+        "-d", "--degree", dest="degree",
+        help="The level of mesh. If the solver use higher-order " +
+        "polynomials, than it may be necessary to set larger degree.",
+        type=int, default=0)
+
     return parser.parse_args(args)
 
 
@@ -137,7 +143,7 @@ def get_pyfrs_list(pyfrsDirPath):
     return fileList
 
 
-def generate_vtu(vtuPath, pyfrsPath, pyfrsList, mesh, overwrite):
+def generate_vtu(vtuPath, pyfrsPath, pyfrsList, mesh, overwrite, degree):
     """generate .vtu files, if they do not exist
 
     Args:
@@ -158,7 +164,7 @@ def generate_vtu(vtuPath, pyfrsPath, pyfrsList, mesh, overwrite):
                   "the vtu file " + o + " exists " +
                   "and won't be overwrited because overwrite=False")
         else:
-            output_vtu(mesh, ifile, ofile)
+            output_vtu(mesh, ifile, ofile, degree)
 
 
 def output_vtu(mesh, iFile, oFile, g=True, p="double", d=0):
@@ -192,4 +198,5 @@ if __name__ == "__main__":
     args = setup_dirs(args)
     pyfrsList = get_pyfrs_list(args.solnDir)
     generate_vtu(
-        args.vtuDir, args.solnDir, pyfrsList, args.mesh, args.overwrite)
+        args.vtuDir, args.solnDir, pyfrsList,
+        args.mesh, args.overwrite, args.degree)
